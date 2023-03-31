@@ -18,13 +18,54 @@
         >
           <FlexboxLayout justifyContent="space-between">
             <StackLayout @tap="selectCurrencyFrom" orientation="horizontal">
-              <Label col="0" text.decode="&#xf5da;" class="fas"></Label>
-              <Label :text="currencyFrom" />
+              <Label
+                marginRight="10"
+                fontSize="32"
+                text.decode="&#xf0d7;"
+                class="fas currency"
+              ></Label>
+              <Label class="currency" :text="currencyFrom" />
             </StackLayout>
 
             <StackLayout @tap="selectCurrencyTo" orientation="horizontal">
-              <Label col="0" text.decode="&#xf5da;" class="fas"></Label>
-              <Label :text="currencyTo" />
+              <Label
+                marginRight="10"
+                text.decode="&#xf0d7;"
+                class="fas currency"
+              ></Label>
+              <Label class="currency" :text="currencyTo" />
+            </StackLayout>
+          </FlexboxLayout>
+
+          <FlexboxLayout justifyContent="center">
+            <StackLayout @tap="selectCurrencyTo">
+              <Label class="price" :text="currentPrice" />
+              <Label
+                class="diff"
+                :class="{
+                  'diff-positive': difference > 0,
+                  'diff-negative': difference < 0,
+                }"
+                :text="
+                  difference > 0
+                    ? '▲ ' + difference.toFixed(3)
+                    : '▼ ' + difference.toFixed(3)
+                "
+              />
+            </StackLayout>
+          </FlexboxLayout>
+        </FlexboxLayout>
+
+        <FlexboxLayout
+          class="currency-container"
+          flexDirection="column"
+          marginTop="32"
+          width="80%"
+        >
+          <FlexboxLayout justifyContent="center">
+            <StackLayout orientation="horizontal">
+              <Label class="currency" :text="currencyFrom" />
+              <Label class="currency" :text="currencyTo" />
             </StackLayout>
           </FlexboxLayout>
 
@@ -73,7 +114,6 @@ export default Vue.extend({
     return {
       title: 'Currency Converter',
       subtitle: 'Exchange rates',
-      // difference: '🔼 0.0123',
       items: ['Option 1', 'Option 2', 'Option 3'],
       selectedItem: '',
     };
@@ -140,8 +180,8 @@ export default Vue.extend({
 .currency-container {
   margin-top: 20;
   padding: 20;
-  background-color: rgba(255, 255, 255, 0.5);
-  border-radius: 5;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 15;
   box-shadow: 0 5 5 rgba(0, 0, 0, 0.2);
 }
 
@@ -161,6 +201,11 @@ export default Vue.extend({
 .diff-negative {
   color: red;
 }
+.currency {
+  font-size: 32;
+  font-weight: bold;
+}
+
 Label {
   font-size: 16;
 }
