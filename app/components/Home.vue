@@ -61,6 +61,7 @@
           flexDirection="column"
           marginTop="32"
           width="80%"
+          backgroundColor="red"
         >
           <FlexboxLayout justifyContent="center">
             <StackLayout orientation="horizontal">
@@ -69,22 +70,17 @@
             </StackLayout>
           </FlexboxLayout>
 
-          <FlexboxLayout justifyContent="center">
-            <StackLayout @tap="selectCurrencyTo">
-              <Label class="price" :text="currentPrice" />
-              <Label
-                class="diff"
-                :class="{
-                  'diff-positive': difference > 0,
-                  'diff-negative': difference < 0,
-                }"
-                :text="
-                  difference > 0
-                    ? '▲ ' + difference.toFixed(3)
-                    : '▼ ' + difference.toFixed(3)
-                "
-              />
-            </StackLayout>
+          <FlexboxLayout
+            backgroundColor="blue"
+            justifyContent="center"
+            height="400"
+          >
+            <LineChart
+              ref="chart"
+              @loaded="onChartLoaded"
+              width="300"
+              height="400"
+            />
           </FlexboxLayout>
         </FlexboxLayout>
       </StackLayout>
@@ -96,6 +92,10 @@
 import Vue from 'nativescript-vue';
 import { mapState, mapActions, mapMutations } from 'vuex';
 import { actionTypes, mutationTypes } from '../store/types';
+import { LineChart } from '@nativescript-community/ui-chart/charts/LineChart';
+import { LineDataSet } from '@nativescript-community/ui-chart/data/LineDataSet';
+import { LineData } from '@nativescript-community/ui-chart/data/LineData';
+
 export default Vue.extend({
   created() {
     this.getAllCurrencies();
@@ -150,6 +150,41 @@ export default Vue.extend({
           this.setCurrencyTo(result);
         }
       });
+    },
+    onChartLoaded() {
+      const chart = this.$refs.chart['nativeView'] as LineChart;
+      chart.backgroundColor = 'white';
+
+      // enable touch gestures
+      chart.setTouchEnabled(true);
+
+      chart.setDrawGridBackground(false);
+
+      // enable scaling and dragging
+      chart.setDragEnabled(true);
+      chart.setScaleEnabled(true);
+
+      // force pinch zoom along both axis
+      chart.setPinchZoom(true);
+
+      // disable dual axis (only use LEFT axis)
+      chart.getAxisRight().setEnabled(false);
+
+      const myData = new Array(500).fill(0).map((v, i) => ({
+        index: i,
+        value: Math.random() * 1,
+      }));
+
+      const sets = [];
+      const set = new LineDataSet(myData, 'Legend Label', 'index', 'value');
+      set.setColor('blue');
+      sets.push(set);
+
+      // Create a data object with the data sets
+      const ld = new LineData(sets);
+
+      // Set data
+      chart.setData(ld);
     },
   },
 });
