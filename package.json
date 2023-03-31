@@ -4,11 +4,12 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "@nativescript-community/ui-chart": "^1.2.27",
+    "@nativescript-community/gesturehandler": "^2.0.9",
     "@nativescript/core": "~8.5.0",
     "@nativescript/theme": "^3.0.2",
     "axios": "^0.18.0",
     "moment": "^2.29.4",
+    "nativescript-ui-chart": "^15.2.3",
     "nativescript-vue": "~2.9.0",
     "vuex": "^3.4.0"
   },

@@ -9,7 +9,7 @@ import {
   plotOptions,
   RootState,
 } from '~/store/types';
-import { Quote } from '~/api/models/currency-exchange-data';
+import {CurrencyExchangeData, Quote} from '~/api/models/currency-exchange-data';
 
 interface CurrenciesState {
   currencyFrom: string;
@@ -19,6 +19,8 @@ interface CurrenciesState {
   ratesLoading: boolean;
   selectedPlot: PlotOption;
   timeseries: Quote[];
+  seriesStartDate: string ;
+  seriesEndDate: string ;
   currentPrice: string;
   difference: number;
 }
@@ -31,6 +33,8 @@ const state: CurrenciesState = {
   currencyLoading: false,
   selectedPlot: plotOptions[3],
   timeseries: [],
+  seriesStartDate: "" ,
+  seriesEndDate: "" ,
   ratesLoading: false,
   currentPrice: '0',
   difference: 0,
@@ -43,11 +47,14 @@ const mutations: MutationTree<CurrenciesState> = {
     state.selectedPlot = newValue;
   },
 
-  [mutationTypes.setTimeSeries](state: CurrenciesState, newValue: Quote[]) {
-    state.timeseries = newValue || [];
-    if (newValue && newValue.length) {
-      const firstValue = newValue[0];
-      const lastValue = newValue[newValue.length - 1];
+  [mutationTypes.setTimeSeries](state: CurrenciesState, newValue: CurrencyExchangeData) {
+    const {end_date ,quotes , start_date} = newValue
+    state.timeseries = quotes || [];
+    state.seriesStartDate = start_date ;
+    state.seriesEndDate = end_date ;
+    if (quotes && quotes.length) {
+      const firstValue = quotes[0];
+      const lastValue = quotes[quotes.length - 1];
       state.currentPrice = lastValue.close.toFixed(3);
       state.difference =
         ((lastValue.close - firstValue.close) * 100) / lastValue.close;
@@ -107,7 +114,6 @@ const actions: ActionTree<CurrenciesState, RootState> = {
     const endDate = moment();
     const startDate = moment().subtract(timeDiff, 'minutes');
     try {
-      console.log(state);
       const rates = await currencyServices.getExchangeRateTimeSeries({
         currency: `${currencyFrom}${currencyTo}`,
         start_date: startDate.utc().format('YYYY-MM-DD-HH:mm'),
@@ -115,7 +121,8 @@ const actions: ActionTree<CurrenciesState, RootState> = {
         interval,
         period,
       });
-      commit(mutationTypes.setTimeSeries, rates.quotes);
+      console.log(rates)
+      commit(mutationTypes.setTimeSeries, rates);
     } catch (e) {
       console.log(e);
     }

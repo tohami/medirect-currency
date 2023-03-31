@@ -61,7 +61,6 @@
           flexDirection="column"
           marginTop="32"
           width="80%"
-          backgroundColor="red"
         >
           <FlexboxLayout justifyContent="center">
             <StackLayout orientation="horizontal">
@@ -71,16 +70,21 @@
           </FlexboxLayout>
 
           <FlexboxLayout
-            backgroundColor="blue"
             justifyContent="center"
-            height="400"
+            height="200"
           >
-            <LineChart
-              ref="chart"
-              @loaded="onChartLoaded"
-              width="300"
-              height="400"
-            />
+            <RadCartesianChart>
+              <DateTimeContinuousAxis v-tkCartesianHorizontalAxis
+                                      minimum="01/03/2023" maximum="31/03/2023"
+
+                                      majorStep="3" majorStepUnit="Day"
+                                       dateFormat="MMM-dd"
+                                      labelFitMode="Rotate" labelRotationAngle="1.2">
+              </DateTimeContinuousAxis>
+              <LinearAxis v-tkCartesianVerticalAxis></LinearAxis>
+              <LineSeries v-tkCartesianSeries :items="timeseries" categoryProperty="date" valueProperty="close"></LineSeries>
+            </RadCartesianChart>
+
           </FlexboxLayout>
         </FlexboxLayout>
       </StackLayout>
@@ -91,10 +95,8 @@
 <script lang="ts">
 import Vue from 'nativescript-vue';
 import { mapState, mapActions, mapMutations } from 'vuex';
-import { actionTypes, mutationTypes } from '../store/types';
-import { LineChart } from '@nativescript-community/ui-chart/charts/LineChart';
-import { LineDataSet } from '@nativescript-community/ui-chart/data/LineDataSet';
-import { LineData } from '@nativescript-community/ui-chart/data/LineData';
+import { actionTypes, mutationTypes } from '~/store/types';
+import moment from 'moment'
 
 export default Vue.extend({
   created() {
@@ -106,7 +108,20 @@ export default Vue.extend({
     loading: (state: any) => state.currencies.currencyLoading,
     currencyFrom: (state: any) => state.currencies.currencyFrom,
     currencyTo: (state: any) => state.currencies.currencyTo,
-    timeseries: (state: any) => state.currencies.timeseries || [],
+    timeseries: (state: any) => {
+      if(state.currencies.timeseries)
+        return state.currencies.timeseries.map(e=> {
+          const time = moment(e.date).date() ;
+          return {
+            ...e ,
+            date : time
+          }
+        })
+
+      return [] ;
+    },
+    seriesStartDate: (state: any) => state.currencies.seriesStartDate ,
+    seriesEndDate: (state: any) => state.currencies.seriesEndDate ,
     currentPrice: (state: any) => state.currencies.currentPrice,
     difference: (state: any) => state.currencies.difference,
   }),
@@ -114,8 +129,6 @@ export default Vue.extend({
     return {
       title: 'Currency Converter',
       subtitle: 'Exchange rates',
-      items: ['Option 1', 'Option 2', 'Option 3'],
-      selectedItem: '',
     };
   },
   methods: {
@@ -150,41 +163,6 @@ export default Vue.extend({
           this.setCurrencyTo(result);
         }
       });
-    },
-    onChartLoaded() {
-      const chart = this.$refs.chart['nativeView'] as LineChart;
-      chart.backgroundColor = 'white';
-
-      // enable touch gestures
-      chart.setTouchEnabled(true);
-
-      chart.setDrawGridBackground(false);
-
-      // enable scaling and dragging
-      chart.setDragEnabled(true);
-      chart.setScaleEnabled(true);
-
-      // force pinch zoom along both axis
-      chart.setPinchZoom(true);
-
-      // disable dual axis (only use LEFT axis)
-      chart.getAxisRight().setEnabled(false);
-
-      const myData = new Array(500).fill(0).map((v, i) => ({
-        index: i,
-        value: Math.random() * 1,
-      }));
-
-      const sets = [];
-      const set = new LineDataSet(myData, 'Legend Label', 'index', 'value');
-      set.setColor('blue');
-      sets.push(set);
-
-      // Create a data object with the data sets
-      const ld = new LineData(sets);
-
-      // Set data
-      chart.setData(ld);
     },
   },
 });

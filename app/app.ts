@@ -1,16 +1,18 @@
 import Vue from 'nativescript-vue';
 import Home from './components/Home.vue';
 import store from './store';
+import { install } from "@nativescript-community/gesturehandler";
+import RadChartPlugin from 'nativescript-ui-chart/vue';
 
 declare let __DEV__: boolean;
+
+install();
 
 // Prints Vue logs when --env.production is *NOT* set while building
 Vue.config.silent = !__DEV__;
 
-Vue.registerElement(
-  'LineChart',
-  () => require('@nativescript-community/ui-chart/charts').LineChart
-);
+Vue.use(RadChartPlugin);
+
 
 new Vue({
   store: store,
