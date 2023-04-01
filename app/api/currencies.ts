@@ -3,10 +3,8 @@ import api, {
   ENDPOINT_CURRENCIES_LIST,
   ENDPOINT_TIME_SERIES,
 } from '~/api/api';
-import { AxiosError, AxiosResponse } from 'axios';
-// import {EnhancedAxiosResponse} from "~/api/utils/axios_reponse_extentions";
-import { CurrenciesData } from '~/api/models/currencies-data';
-import { CurrencyExchangeData } from './models/currency-exchange-data';
+import { CurrenciesData } from '~/api/types/currencies-data';
+import { CurrencyExchangeData } from './types/currency-exchange-data';
 
 export default {
   async getLiveCurrenciesList(): Promise<CurrenciesData> {

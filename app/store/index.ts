@@ -7,7 +7,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store<RootState>({
   state: {
-    lang: 'En', // a simple property
+    lang: 'En', 
   },
   modules: {
     currencies,

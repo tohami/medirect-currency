@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex, { ActionTree, GetterTree, Module, MutationTree } from 'vuex';
-import currencyServices from '@/api/currencies';
+import currencyServices from '~/api/currencies';
 import moment from 'moment';
 import {
   actionTypes,
@@ -12,7 +12,7 @@ import {
 import {
   CurrencyExchangeData,
   Quote,
-} from '~/api/models/currency-exchange-data';
+} from '~/api/types/currency-exchange-data';
 
 interface CurrenciesState {
   currencyFrom: string;

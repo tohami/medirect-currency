@@ -8,7 +8,6 @@ declare let __DEV__: boolean;
 
 install();
 
-// Prints Vue logs when --env.production is *NOT* set while building
 Vue.config.silent = !__DEV__;
 
 Vue.use(RadChartPlugin);

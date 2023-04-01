@@ -1,8 +1,7 @@
 // @ts-ignore
 import axios from 'axios/dist/axios';
-import { Http } from '@nativescript/core';
 
-const _API_KEY = 'nGw50epQqzh2LdpcGCOn';
+const _API_KEY = 'DM_GtTVIrWxa_SIIEW_L';
 
 // @ts-ignore
 const api: AxiosInstance = axios.create({
