@@ -69,22 +69,36 @@
             </StackLayout>
           </FlexboxLayout>
 
-          <FlexboxLayout
-            justifyContent="center"
-            height="200"
-          >
-            <RadCartesianChart>
-              <DateTimeContinuousAxis v-tkCartesianHorizontalAxis
-                                      minimum="01/03/2023" maximum="31/03/2023"
-
-                                      majorStep="3" majorStepUnit="Day"
-                                       dateFormat="MMM-dd"
-                                      labelFitMode="Rotate" labelRotationAngle="1.2">
-              </DateTimeContinuousAxis>
-              <LinearAxis v-tkCartesianVerticalAxis></LinearAxis>
-              <LineSeries v-tkCartesianSeries :items="timeseries" categoryProperty="date" valueProperty="close"></LineSeries>
+          <FlexboxLayout justifyContent="center">
+            <RadCartesianChart width="300" height="300">
+              <CategoricalAxis
+                v-tkBarHorizontalAxis
+                labelFitMode="Rotate"
+                labelRotationAngle="1.2"
+              ></CategoricalAxis>
+              <LineSeries
+                v-tkCartesianSeries
+                :items="timeseries"
+                categoryProperty="label"
+                valueProperty="close"
+              ></LineSeries>
             </RadCartesianChart>
+          </FlexboxLayout>
 
+          <FlexboxLayout justifyContent="center">
+            <StackLayout orientation="horizontal" width="100%">
+              <Button
+                width="25%"
+                class="plot"
+                :key="item.id"
+                fontColor="#fff"
+                :backgroundColor="selectedPlot === item ? '#c5e9ff' : '#fff'"
+                v-for="(item, index) in plotOptions"
+                :text="item.title"
+                @tap="setSelectedPlot(item)"
+              >
+              </Button>
+            </StackLayout>
           </FlexboxLayout>
         </FlexboxLayout>
       </StackLayout>
@@ -95,8 +109,14 @@
 <script lang="ts">
 import Vue from 'nativescript-vue';
 import { mapState, mapActions, mapMutations } from 'vuex';
-import { actionTypes, mutationTypes } from '~/store/types';
-import moment from 'moment'
+import {
+  actionTypes,
+  mutationTypes,
+  plotOptions,
+  PlotOption,
+} from '~/store/types';
+
+import moment from 'moment';
 
 export default Vue.extend({
   created() {
@@ -108,27 +128,16 @@ export default Vue.extend({
     loading: (state: any) => state.currencies.currencyLoading,
     currencyFrom: (state: any) => state.currencies.currencyFrom,
     currencyTo: (state: any) => state.currencies.currencyTo,
-    timeseries: (state: any) => {
-      if(state.currencies.timeseries)
-        return state.currencies.timeseries.map(e=> {
-          const time = moment(e.date).date() ;
-          return {
-            ...e ,
-            date : time
-          }
-        })
-
-      return [] ;
-    },
-    seriesStartDate: (state: any) => state.currencies.seriesStartDate ,
-    seriesEndDate: (state: any) => state.currencies.seriesEndDate ,
+    timeseries: (state: any) => state.currencies.timeseries || [],
     currentPrice: (state: any) => state.currencies.currentPrice,
     difference: (state: any) => state.currencies.difference,
+    selectedPlot: (state: any) => state.currencies.selectedPlot,
   }),
   data() {
     return {
       title: 'Currency Converter',
       subtitle: 'Exchange rates',
+      plotOptions: plotOptions,
     };
   },
   methods: {
@@ -137,6 +146,7 @@ export default Vue.extend({
       actionTypes.getCurrencyExtchangeRates,
       actionTypes.setCurrencyFrom,
       actionTypes.setCurrencyTo,
+      actionTypes.setPlotOption,
     ]),
     ...mapMutations('currencies', []),
     selectCurrencyFrom() {
@@ -152,6 +162,7 @@ export default Vue.extend({
         }
       });
     },
+
     selectCurrencyTo() {
       // Handle selection of currency to
       action(
@@ -163,6 +174,9 @@ export default Vue.extend({
           this.setCurrencyTo(result);
         }
       });
+    },
+    setSelectedPlot(plot: PlotOption) {
+      this.setPlotOption(plot);
     },
   },
 });
@@ -218,7 +232,14 @@ export default Vue.extend({
   font-size: 32;
   font-weight: bold;
 }
-
+.plot {
+  font-color: #a3a3a3;
+  border-radius: 8;
+}
+.selected-plot {
+  background-color: #c5e9ff;
+  font-color: #fff;
+}
 Label {
   font-size: 16;
 }

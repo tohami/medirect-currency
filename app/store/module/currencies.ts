@@ -9,7 +9,10 @@ import {
   plotOptions,
   RootState,
 } from '~/store/types';
-import {CurrencyExchangeData, Quote} from '~/api/models/currency-exchange-data';
+import {
+  CurrencyExchangeData,
+  Quote,
+} from '~/api/models/currency-exchange-data';
 
 interface CurrenciesState {
   currencyFrom: string;
@@ -19,8 +22,6 @@ interface CurrenciesState {
   ratesLoading: boolean;
   selectedPlot: PlotOption;
   timeseries: Quote[];
-  seriesStartDate: string ;
-  seriesEndDate: string ;
   currentPrice: string;
   difference: number;
 }
@@ -31,10 +32,8 @@ const state: CurrenciesState = {
   // startDate: getDateBeforeDays(7),
   allCurrencies: [],
   currencyLoading: false,
-  selectedPlot: plotOptions[3],
+  selectedPlot: plotOptions[0],
   timeseries: [],
-  seriesStartDate: "" ,
-  seriesEndDate: "" ,
   ratesLoading: false,
   currentPrice: '0',
   difference: 0,
@@ -43,15 +42,17 @@ const state: CurrenciesState = {
 export const getters: GetterTree<CurrenciesState, RootState> = {};
 
 const mutations: MutationTree<CurrenciesState> = {
-  [mutationTypes.setPlotOption](state: CurrenciesState, newValue: PlotOption) {
-    state.selectedPlot = newValue;
-  },
-
-  [mutationTypes.setTimeSeries](state: CurrenciesState, newValue: CurrencyExchangeData) {
-    const {end_date ,quotes , start_date} = newValue
-    state.timeseries = quotes || [];
-    state.seriesStartDate = start_date ;
-    state.seriesEndDate = end_date ;
+  [mutationTypes.setTimeSeries](
+    state: CurrenciesState,
+    newValue: CurrencyExchangeData
+  ) {
+    const { end_date, quotes, start_date } = newValue;
+    state.timeseries = quotes.map((e) => {
+      return {
+        ...e,
+        label: moment(e.date).format(state.selectedPlot.timeFormat),
+      };
+    });
     if (quotes && quotes.length) {
       const firstValue = quotes[0];
       const lastValue = quotes[quotes.length - 1];
@@ -59,10 +60,16 @@ const mutations: MutationTree<CurrenciesState> = {
       state.difference =
         ((lastValue.close - firstValue.close) * 100) / lastValue.close;
     }
+
+    console.log(newValue);
   },
 
   [mutationTypes.setAllCurrencies](state, newValue: [string, string][]) {
     state.allCurrencies = newValue;
+  },
+
+  [actionTypes.setPlotOption](state, newValue: PlotOption) {
+    state.selectedPlot = newValue;
   },
 
   [mutationTypes.setLoading](state, newValue: boolean) {
@@ -89,6 +96,13 @@ const actions: ActionTree<CurrenciesState, RootState> = {
       state.currencyFrom = state.currencyTo;
     }
     state.currencyTo = newValue;
+    dispatch(actionTypes.getCurrencyExtchangeRates);
+  },
+
+  [actionTypes.setPlotOption]({ commit, dispatch }, newValue: PlotOption) {
+    if (newValue === state.selectedPlot) return;
+
+    commit(actionTypes.setPlotOption, newValue);
     dispatch(actionTypes.getCurrencyExtchangeRates);
   },
 
@@ -121,7 +135,7 @@ const actions: ActionTree<CurrenciesState, RootState> = {
         interval,
         period,
       });
-      console.log(rates)
+      console.log(rates);
       commit(mutationTypes.setTimeSeries, rates);
     } catch (e) {
       console.log(e);

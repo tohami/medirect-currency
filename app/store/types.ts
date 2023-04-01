@@ -3,8 +3,6 @@ export interface RootState {
 }
 
 export const mutationTypes = {
-  setPlotOption: 'setPlotOption',
-
   setAllCurrencies: 'setAllCurrencies',
 
   setLoading: 'setLoading',
@@ -17,6 +15,7 @@ export const actionTypes = {
   getCurrencyExtchangeRates: 'getCurrencyExtchangeRates',
   setCurrencyFrom: 'setCurrencyFrom',
   setCurrencyTo: 'setCurrencyTo',
+  setPlotOption: 'setPlotOption',
 };
 
 export interface PlotOption {
@@ -24,6 +23,7 @@ export interface PlotOption {
   interval: string;
   period: number;
   timeDiff: number;
+  timeFormat: string;
 }
 
 export const plotOptions: PlotOption[] = [
@@ -33,23 +33,27 @@ export const plotOptions: PlotOption[] = [
     period: 1,
     //time diff in minutes
     timeDiff: 15,
+    timeFormat: 'mm',
   },
   {
     title: '1H',
     interval: 'minute',
-    period: 1,
+    period: 5,
     timeDiff: 60,
+    timeFormat: 'mm',
   },
   {
     title: '1D',
     interval: 'hourly',
-    period: 1,
+    period: 2,
     timeDiff: 60 * 24,
+    timeFormat: 'HH',
   },
   {
     title: '1M',
     interval: 'daily',
-    period: 1,
+    period: 2,
     timeDiff: 60 * 24 * 30,
+    timeFormat: 'DD',
   },
 ];
