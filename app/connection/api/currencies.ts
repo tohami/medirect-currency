@@ -3,9 +3,9 @@ import api, {
   ENDPOINT_CONVERT,
   ENDPOINT_CURRENCIES_LIST,
   ENDPOINT_TIME_SERIES,
-} from '~/api/api';
-import { CurrenciesData } from '~/api/types/currencies-data';
-import { CurrencyExchangeData } from './types/currency-exchange-data';
+} from './api';
+import { CurrenciesData } from '~/types/currencies-data';
+import { CurrencyExchangeData } from '~/types/currency-exchange-data';
 
 export default {
   async getLiveCurrenciesList(): Promise<CurrenciesData> {

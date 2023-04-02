@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex, { ActionTree, GetterTree, Module, MutationTree } from 'vuex';
-import currencyServices from '~/api/currencies';
+import currencyServices from '~/connection/api/currencies';
 import moment from 'moment';
 import {
   actionTypes,
@@ -9,10 +9,7 @@ import {
   plotOptions,
   RootState,
 } from '~/store/types';
-import {
-  CurrencyExchangeData,
-  Quote,
-} from '~/api/types/currency-exchange-data';
+import { CurrencyExchangeData, Quote } from '~/types/currency-exchange-data';
 
 interface CurrenciesState {
   currencyFrom: string;
@@ -24,6 +21,7 @@ interface CurrenciesState {
   timeseries: Quote[];
   currentPrice: string;
   difference: number;
+  socketConnected : boolean ;
 }
 
 const state: CurrenciesState = {
@@ -37,6 +35,7 @@ const state: CurrenciesState = {
   ratesLoading: false,
   currentPrice: '0',
   difference: 0,
+  socketConnected :false
 };
 
 export const getters: GetterTree<CurrenciesState, RootState> = {};

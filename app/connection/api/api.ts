@@ -1,6 +1,5 @@
 // @ts-ignore
 import axios from 'axios/dist/axios';
-
 const _API_KEY = 'DM_GtTVIrWxa_SIIEW_L';
 
 // @ts-ignore

@@ -18,6 +18,7 @@ export const actionTypes = {
   setCurrencyFrom: 'setCurrencyFrom',
   setCurrencyTo: 'setCurrencyTo',
   setPlotOption: 'setPlotOption',
+  setSocketConnected: 'setSocketConnected',
 };
 
 export interface PlotOption {
