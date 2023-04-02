@@ -1,5 +1,6 @@
 import api, {
   defaultParams,
+  ENDPOINT_CONVERT,
   ENDPOINT_CURRENCIES_LIST,
   ENDPOINT_TIME_SERIES,
 } from '~/api/api';
@@ -13,6 +14,26 @@ export default {
         params: defaultParams,
       });
       return response.data.available_currencies;
+    } catch (error: any) {
+      if (error.response) {
+        throw error.response;
+      } else {
+        throw 'Error fetching data from the server.';
+      }
+    }
+  },
+
+  async getCurrentPrice(from: string, to: string): Promise<number> {
+    try {
+      const response = await api.get(ENDPOINT_CONVERT, {
+        params: {
+          ...defaultParams,
+          from: from,
+          to: to,
+          amount: 1,
+        },
+      });
+      return response.data.quote;
     } catch (error: any) {
       if (error.response) {
         throw error.response;

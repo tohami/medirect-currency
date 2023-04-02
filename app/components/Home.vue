@@ -157,7 +157,7 @@ export default Vue.extend({
         'Cancel',
         this.currencies.map((e) => e[0])
       ).then((result) => {
-        if (result !== 'cancel') {
+        if (result !== 'Cancel') {
           this.setCurrencyFrom(result);
         }
       });
@@ -170,7 +170,7 @@ export default Vue.extend({
         'Cancel',
         this.currencies.map((e) => e[0])
       ).then((result) => {
-        if (result !== 'cancel') {
+        if (result !== 'Cancel') {
           this.setCurrencyTo(result);
         }
       });

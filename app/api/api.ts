@@ -15,4 +15,5 @@ export const defaultParams = {
 };
 
 export const ENDPOINT_CURRENCIES_LIST = `v1/live_currencies_list`;
+export const ENDPOINT_CONVERT = `/v1/convert`;
 export const ENDPOINT_TIME_SERIES = `v1/timeseries`;

@@ -56,12 +56,17 @@ const mutations: MutationTree<CurrenciesState> = {
     if (quotes && quotes.length) {
       const firstValue = quotes[0];
       const lastValue = quotes[quotes.length - 1];
-      state.currentPrice = lastValue.close.toFixed(3);
       state.difference =
         ((lastValue.close - firstValue.close) * 100) / lastValue.close;
+    } else {
+      state.difference = 0.0;
     }
 
     console.log(newValue);
+  },
+
+  [mutationTypes.setCurrentPrice](state, newValue: string) {
+    state.currentPrice = newValue;
   },
 
   [mutationTypes.setAllCurrencies](state, newValue: [string, string][]) {
@@ -127,19 +132,32 @@ const actions: ActionTree<CurrenciesState, RootState> = {
 
     const endDate = moment();
     const startDate = moment().subtract(timeDiff, 'minutes');
-    try {
-      const rates = await currencyServices.getExchangeRateTimeSeries({
+
+    currencyServices
+      .getExchangeRateTimeSeries({
         currency: `${currencyFrom}${currencyTo}`,
         start_date: startDate.utc().format('YYYY-MM-DD-HH:mm'),
         end_date: endDate.utc().format('YYYY-MM-DD-HH:mm'),
         interval,
         period,
+      })
+      .then((rates) => {
+        commit(mutationTypes.setTimeSeries, rates);
+      })
+      .catch((e) => {
+        console.log(e);
+        commit(mutationTypes.setTimeSeries, []);
       });
-      console.log(rates);
-      commit(mutationTypes.setTimeSeries, rates);
-    } catch (e) {
-      console.log(e);
-    }
+
+    currencyServices
+      .getCurrentPrice(currencyFrom, currencyTo)
+      .then((price) => {
+        commit(mutationTypes.setCurrentPrice, price.toString());
+      })
+      .catch((e) => {
+        console.log(e);
+        commit(mutationTypes.setCurrentPrice, 'Unknown');
+      });
   },
 };
 

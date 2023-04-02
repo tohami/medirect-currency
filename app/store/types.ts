@@ -8,6 +8,8 @@ export const mutationTypes = {
   setLoading: 'setLoading',
 
   setTimeSeries: 'setTimeSeries',
+
+  setCurrentPrice: 'setCurrentPrice',
 };
 
 export const actionTypes = {
